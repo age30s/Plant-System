@@ -10,15 +10,18 @@
 // LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 #include <Adafruit_NeoPixel.h>
-
+#include <SoftwareSerial.h> // using this library to set up the rx tx pins
+const byte rxPin = 3;
+const byte txPin = 4;
+SoftwareSerial mySerial (rxPin, txPin);
 #define LED_COUNT 10
-#define Pin 4
+#define Pin 7
 
 Adafruit_NeoPixel leds = Adafruit_NeoPixel(LED_COUNT, Pin, NEO_GRB + NEO_KHZ800);
 
 int R = 255;
-int G = 100;
-int B = 150;
+int G = 255;
+int B = 255;
 int brightness = 32;
 
 int photoPin = A0; // This is the pin that resistor is connected in the arduino
@@ -33,6 +36,7 @@ void setup() {
   leds.begin();
   clearLEDs();
   Serial.begin(9600);
+  mySerial.begin(9600);
   pinMode(photoPin,INPUT);
 }
 
@@ -53,15 +57,23 @@ void loop() {
     Serial.println(light);
     previousMillis = currentMillis;
     // The below if statements print the 5 predefined values on the lcd's based on the value of the photo resistor
-    if(light < 350){
-      for(int i = 0; i < LED_COUNT; i++){
-        leds.setPixelColor(i,R,G,B);
-        leds.setBrightness(brightness);
-        leds.show();
-      }
+    if(light < 600){
+      mySerial.write('l');
     }
     else{
-      clearLEDs();
+      mySerial.write('n');  
+    }
+    if(mySerial.available()){
+      char serRead = mySerial.read(); 
+      if(serRead == 'l'){
+        for(int i = 0; i < LED_COUNT; i++){
+          leds.setPixelColor(i,R,G,B);
+          leds.setBrightness(brightness);
+          leds.show();
+        }
+      }else if(serRead == 'n'){
+        clearLEDs();
+      }
     }
     // The below 2 lines prints milliseconds in the second row of the lcd
     // lcd.setCursor(0,1);
