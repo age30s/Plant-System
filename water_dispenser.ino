@@ -24,22 +24,22 @@ void setup() {
 
 void  loop() {
   int reading = digitalRead(buttonPin);
-  Serial.println(reading);
+  //Serial.println(reading);
   if (reading != lastButtonState) { //this will check for if we are using the first button
     //Serial.print("HELLO\n");
     lastDebounceTime = millis(); //reset the debounce timer
   }
-  Serial.print("HELLO IAM AHERE\n");
+  //Serial.print("HELLO IAM AHERE\n");
   if ((millis() - lastDebounceTime) > debounceDelay) { 
     if (reading != button_state){
       button_state = reading;
       if (button_state == HIGH) {
         digitalWrite(waterpump, HIGH);  // Turn on water pump
-        Serial.print("button is high\n");
+        //Serial.print("button is high\n");
       }
       else {
         digitalWrite(waterpump, LOW);
-        Serial.print("button is low\n");
+        //Serial.print("button is low\n");
       }
     }
   } 
